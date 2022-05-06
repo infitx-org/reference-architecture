@@ -1,0 +1,61 @@
+/**
+ * Custom Styles here.
+ *
+ * ref：https://v1.vuepress.vuejs.org/config/#index-styl
+ */
+
+@import url('https://fonts.googleapis.com/css?family=Varela+Round')
+@import url('https://fonts.googleapis.com/css?family=Open+Sans')
+
+h1, h2, h3
+  font-family: 'Varela Round'
+
+p
+  font-family: 'Open Sans'
+
+.home .hero img
+  max-width 450px!important
+
+.home .feature
+  max-width: 33% !important
+
+.home .hero .description
+  color: #000000 !important
+  max-width: 720px !important
+
+.custom-block table
+  width auto
+  border 1px solid #ddd
+
+.custom-block th
+  background-color #00a3ff
+  color white
+
+.custom-block
+  &.col-wrapper
+    @media (min-width: 1200px)
+      &
+        display flex
+
+  &.col-full
+    width 100%
+
+    @media (min-width: 1200px)
+      &
+        flex 0 0 100%
+
+  &.col-half
+    width 100%
+
+    @media (min-width: 1200px)
+      &
+        flex 0 0 50%
+
+  &.col-third
+    width 100%
+
+    @media (min-width: 1240px)
+      &
+        flex 0 0 33.333333%
+
+    
