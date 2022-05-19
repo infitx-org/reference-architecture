@@ -3,21 +3,27 @@ sidebar_position: 5
 ---
 
 # Testing 
-## Test types
-It is important to discuss the types of tests that are create, why they are created, and all the ways in which they are run.
-The test types are:
-1. Unit tests
-Easy for developers to create; run; and develop against. Should form the bulk of the tests.
-1. Narrow-integration tests
-A test which tests a single aspect of the code that interfaces with I/O in some way.
-1. Functional tests (API based)
-TTK, Jest and Postman tests that run on a deployment
-1. Functional tests (UI based) 
-Testcafe tests that run on the UI
-1. Deployment tests
-Functional test that are packaged as helm test that can be used to test a deployment.
+## Test types used by the team
+There are hundreds of test types or description of test using in the industry, and sometimes a description of a test type means something different to different teams. Because of this it seamed important to list the test terms chosen as important, and define what they mean, why they are created, and all the ways in which they are run.
+There are the test type terms that:
+1. **Unit tests**
+These test are easy for developers to create, run and develop against. It is recommended that these tests are run automatically in the CI pipeline when a pull request is created. Unit tests should form the bulk of the automated tests. 
+1. **Narrow-integration tests**
+A test which tests a single aspect of the code that interfaces with another system in some way. I.e. the interfacing between two systems is tested. It is recommended that these tests are run automatically in the CI pipeline when a pull request is created. When testing interfaces, it is preferred to build narrow integration test instead of unit tests with large scale mocking.
+1. **Functional tests** also called integration or end-to-end tests
+These are end-to-end tests that tests that call functions and validate the outcomes of the system. It is recommended that these test are committed alongside the code that performs the functions being tested.
+   - API base functional test are built using TTK, Jest and Postman tests.
+   - UI Functional test are built using TestCafe.
+There are three way's in which functional test are run. 
+   1. Manually run by an engineer against a chosen environment. (Developers can use this method to add to the test set, and to debug the code in a TTD style.)
+   1. Automatically run inside a CI pipeline
+   1. As a test to validate the deployment  I.e. deployment test   
+1. **Deployment tests**
+Deployment test are tests that are designed to validate a deployment. It is recommended that these test are packaged as helm tests and then configured to run through an IaC deployment pipeline.
+1. **Golden Path tests**
+This is the test set that validate a product. Normally this comprises of a collection of all functional product component functional tests, and may have additional test collections on top of that. It is recommended that functional test are packaged as helm tests and configured to run through the IaC deployment pipeline. 
 
-## CICD automated tests 
+## CI automated tests 
 These should include:
 1. Unit Tests
 1. Narrow Integration Tests (which may be the same as the Unit Tests)
@@ -27,7 +33,7 @@ That means that Functional Tests should only be executed in the CICD if it is po
 The Functional Tests should be executed by the IaC environment via Helm, and it can also be automated by IaC Github listening to new releases (i.e. helm charts). Keep in mind that it MUST still be possible for a developer to run the tests locally against a full-stack environment (remotely such as product dev, or locally if they have the available resources, etc).
 
 
-## Recommended Packages
+## Recommended Packages/Tools
 
 The best package to use for testing often depends on the type and scope of a project
 versus one size fits all. For that reason we'll mention two of the test frameworks
@@ -50,114 +56,14 @@ other features (such as snapshot testing and code coverage) out-of-the-box.
 
 Jest is owned by Facebook.
 
-## Guidance
-
-Both Mocha and Jest provide test parallelization. By default this is disabled in Mocha,
-as many use-cases see a negative performance impact when running tests in parallel. If you
-experience longer test times than expected you should check if enabling or disabling
-parallelism will improve test run times.
-
-### When Jest might be the better choice
-
-When testing React or component-based applications.
-
-When using a compile-to-JavaScript language (like TypeScript).
-
-When snapshots are useful. [Snapshots][] provide an easy to use way of testing output
-of a function and saving the result as a snapshot artifact, which can then be used to
-compare against as a test. As an example:
-
-```shell
-test('unknown service', () => {
-    expect(() => {
-      bindings.getBinding('DOEST_NOT_EXIST');
-    }).toThrowErrorMatchingSnapshot('unknown service');
-  });
-```
-
-The first time the test is run it will create/store a snapshot of the exepcted exception.
-On subsequent runs if the exception does not match the snapshot, it will report
-a test failure. This makes generating/capturing the result from an operation being tested
-fast and easy.
-
-### When Mocha might be the better choice
-
-When you want a smaller dependency tree (91 packages versus 522).
-
-When Jest's opinions, environment proxies and dependency upon [babel][] are unfavorable for your use-case.
-
-As an example of potential problems with Jest's environment proxies, Jest replaces globals in the environment in a
-way that can cause failures with native addons. As an example, this simple test fails:
-
-```JavaScript
-const addon = require('bindings')('hello');
-
-describe('test suite 1', () => {
-  test('exception', () => {
-    expect(addon.exception()).toThrow(TypeError);
-  });
-});
-```
-
-even thought the addon is throwing the expected exception:
-
-```C++
-static napi_value ExceptionMethod(napi_env env, napi_callback_info info) {
-   napi_throw_type_error(env, "code1", "type exception");
-   return NULL;
-}
-```
-
-and the failure reports the exception as `TypeError: type exception`
-
-```shell
- FAIL  __tests__/test.js
-  ● test suite 1 › exception
-
-    TypeError: type exception
-
-      3 | describe('test suite 1', () => {
-      4 |   test('exception', () => {
-    > 5 |     expect(addon.exception()).toThrow(TypeError);
-        |                  ^
-      6 |   });
-      7 | });
-      8 |
-
-      at Object.<anonymous> (__tests__/test.js:5:18)
-```
-
-An equivalent test runs successfully with Mocha. The full source for the test is here: https://github.com/nodeshift-blog-examples/jest-with-native-addon-issue
-
-### Recommended Packages to Use Alongside Mocha
-
-Because Mocha is unopinionated, it does not ship with "batteries included." While Mocha is usable
-without any other third-party library, many users find the following libraries and tools helpful.
-
-_See the [mocha documentation][] and [examples repository][] for more information on integrating with other tools_.
 
 #### Assertion Library
 
-Most Mocha users will want to consume a third-party _assertion library_. Besides the Node.js
-built-in [`assert` module][], Mocha recommends one of the following:
-
-- [chai][]: the most popular general-purpose assertion library, with traditional and "natural language" APIs available
-- [unexpected][]: a string-based natural language API, Mocha uses Unexpected in its own tests
-
-Both of the above have their own plugin ecosystems.
 
 #### Stubs, Spies and Mocks
 
-Many users will want a library providing _stubs, spies and mocks_ to aid isolation when writing unit tests.
-
-- [sinon][]: the most popular stub, spy and mock library; mature
-- [testdouble][]: a full-featured library with the ability to mock at the module level
-
-Both of the above have their own plugin ecosystems.
 
 #### Code Coverage
-
-Mocha does not automatically compute code coverage. If you need it, use:
 
 - [nyc][]: the most popular code-coverage tool; the successor CLI for Istanbul
 
