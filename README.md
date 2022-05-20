@@ -8,11 +8,6 @@ Images that need to be referenced by the markup can be coppied into 'docs\src\vu
 ## Deploy locally
 Follow these steps in order to deploy the documents locally.
 
-Change folder to docs
-
-```
-cd docs
-```
 
 Install dependencies
 ```
