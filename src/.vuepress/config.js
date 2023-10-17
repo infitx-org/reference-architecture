@@ -114,7 +114,20 @@ module.exports = {
               '/NodeJS/development/protecting-code',
               '/NodeJS/development/secure-development-process',
               '/NodeJS/development/testing',
-              '/NodeJS/development/typescript'
+              '/NodeJS/development/typescript',
+              {
+                title: "NodeJS Tools",
+                path: '/NodeJS/development/tools/',
+                children :[
+                  {
+                    title: "Devspace",
+                    path: '/NodeJS/development/tools/',
+                    children :[
+                      '/NodeJS/development/tools/devspace',
+                      '/NodeJS/development/tools/devspace_config',
+                      '/NodeJS/development/tools/devspace_script'
+                  ]},
+              ]}
             ]},
             {
               title: "Functional Components",
