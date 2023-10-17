@@ -3,10 +3,16 @@
   "version": "0.0.1",
   "description": "The goal of the reference architecture is to present",
   "main": "index.js",
+  "engines": {
+    "node": "16.x"
+  },
   "authors": {
     "name": "Paul Baker",
-    "email": "paul.baker@modusbox.com"
+    "email": "paul.baker@infitx.com"
   },
+  "contributors": [
+    "Miguel de Barros <miguel.debarros@infitx.com>"
+  ],
   "repository": "reference-architecture/reference-architecture",
   "scripts": {
     "dev": "vuepress dev src --no-cache",
